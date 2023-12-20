@@ -12,10 +12,16 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
 
 </head>
-
     <body>
-    <!-- Remove this line the first time you edit this file -->
-     This is the index page of your Django app!
+        {% if user.is_authenticated %}
+        <p>Username: {{user.username}}, First name: {{user.first_name}}, Last name: {{user.last_name}} </p>
+        <div class="card" style="width: 36rem;">            
+            <div class="dropdown-content">                
+                <a class="btn btn-primary" href="logout">Logout</a> 
+            </div>
+        </div>
+        {%else%}
+        
     <!--Add a nav bar here -->
     <nav class="navbar navbar-nav navbar-right">
         <div class="container">
@@ -27,26 +33,24 @@
                     <div class="card" style="width: 36rem;">
                         <a class="btn btn-primary" href="contact">Contact us</a> 
                     </div>
+                    <div class="card" style="width: 36rem;">
+                        <input type="text" placeholder="Enter User Name: " name="username" required>
+                    </div>
+                    <div class="card" style="width: 36rem;">
+                        <input type="text" placeholder="Enter User password: " name="password" required>
+                    </div>
+                    <div class="card" style="width: 36rem;">
+                        <a class="btn btn-primary" href="login">login</a> 
+                    </div>
+                    <div class="card" style="width: 36rem;">
+                        <a class="btn btn-primary" href="registration">signup</a> 
+                    </div>
                 </div>
                 
-            </div>
-           
+            </div>           
         </div>
     </nav>
-       
-    <ul class="nav navbar-nav navbar-right">
-        {% if user.is_authenticated %}
-        <li>
-            <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-            <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
-        </li>
-        {% else %}
-        <li>
-           
-        </li>
-        {% endif %}
-    </ul>
-
+    {% endif %}
     </body>
 
 </html>
