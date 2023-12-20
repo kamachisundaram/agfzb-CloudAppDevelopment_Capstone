@@ -17,8 +17,35 @@
     <!-- Remove this line the first time you edit this file -->
      This is the index page of your Django app!
     <!--Add a nav bar here -->
-
-    <!--Add a dealer table here -->
+    <nav class="navbar navbar-nav navbar-right">
+        <div class="container">
+            <div class="navbar-header">
+                <div class="card-deck" style="width: 36rem;">
+                    <div class="card" style="width: 36rem;">
+                        <a class="btn btn-primary" href="aboutus">About us</a>                                                                      
+                    </div>
+                    <div class="card" style="width: 36rem;">
+                        <a class="btn btn-primary" href="contact">Contact us</a> 
+                    </div>
+                </div>
+                
+            </div>
+           
+        </div>
+    </nav>
+       
+    <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+        <li>
+            <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+            <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+        </li>
+        {% else %}
+        <li>
+           
+        </li>
+        {% endif %}
+    </ul>
 
     </body>
 
