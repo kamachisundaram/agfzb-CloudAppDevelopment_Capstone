@@ -1,20 +1,35 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from .models import Course, Lesson, Enrollment
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from django.http import Http404
-from django.urls import reverse
-from django.views import generic, View
-from collections import defaultdict
+# from .models import related models
+# from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
+from datetime import datetime
 import logging
+import json
+
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-# Create authentication related views
+
+# Create your views here.
 
 
+# Create an `about` view to render a static about page
+def about(request):    
+    return render(request,'djangoapp/about.html')
+
+def contact(request):
+    return render(request,'djangoapp/contact.html')
+
+# Create a `contact` view to return a static contact page
+#def contact(request):
+
+# Create a `login_request` view to handle sign in request
+# def login_request(request):
+# ...
 def login_request(request):
     context = {}
     # Handles POST request
@@ -27,35 +42,65 @@ def login_request(request):
         if user is not None:
             # If user is valid, call login method to login current user
             login(request, user)
-            return redirect('onlinecourse:popular_course_list')
+            return redirect('djangoapp:contact')
         else:
             # If not, return to login page again
-            return render(request, 'onlinecourse/user_login.html', context)
+            return render(request, 'djangoapp/user_login.html', context)
     else:
-        return render(request, 'onlinecourse/user_login.html', context)
-# Add a class-based course list view
-class CourseListView(generic.ListView):
-    template_name = 'onlinecourse/course_list.html'
-    context_object_name = 'course_list'
-
-    def get_queryset(self):
-       courses = Course.objects.order_by('-total_enrollment')[:10]
-       return courses
+        return render(request, 'djangoapp/user_login.html', context)
 
 
-# Add a generic course details view
-class CourseDetailsView(generic.DetailView):
-    model = Course
-    template_name = 'onlinecourse/course_detail.html'
+def logout_request(request):
+     # Get the user object based on session id in request
+    print("Log out the user `{}`".format(request.user.username))
+    # Logout user in the request
+    logout(request)
+    # Redirect user back to course list view
+    return redirect('djangoapp:contact')
+# ...
+
+# Create a `registration_request` view to handle sign up request
+# def registration_request(request):
+# ...
+def registration_request(request):
+    context = {}
+    # If it is a GET request, just render the registration page
+    if request.method == 'GET':
+        return render(request, 'djangoapp/user_registration.html', context)
+    # If it is a POST request
+    elif request.method == 'POST':
+        # <HINT> Get user information from request.POST
+        # <HINT> username, first_name, last_name, password
+        user_exist = False
+        try:
+            # Check if user already exists
+            User.objects.get(username=username)
+            user_exist = True
+        except:
+            # If not, simply log this is a new user
+            logger.debug("{} is new user".format(username))
+        # If it is a new user
+        if not user_exist:
+            # Create user in auth_user table
+            user = User.objects.create_user()
+            # <HINT> Login the user and 
+            # redirect to course list page
+            return redirect("djangoapp:popular_course_list")
+        else:
+            return render(request, 'djangoapp/user_registration.html', context)
+
+# Update the `get_dealerships` view to render the index page with a list of dealerships
+def get_dealerships(request):
+    context = {}
+    if request.method == "GET":
+        return render(request, 'djangoapp/index.html', context)
 
 
-class EnrollView(View):
+# Create a `get_dealer_details` view to render the reviews of a dealer
+# def get_dealer_details(request, dealer_id):
+# ...
 
-    # Handles get request
-    def post(self, request, *args, **kwargs):
-        course_id = kwargs.get('pk')
-        course = get_object_or_404(Course, pk=course_id)
-        # Create an enrollment
-        course.total_enrollment += 1
-        course.save()
-        return HttpResponseRedirect(reverse(viewname='onlinecourse:course_details', args=(course.id,)))
+# Create a `add_review` view to submit a review
+# def add_review(request, dealer_id):
+# ...
+
